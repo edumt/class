@@ -8,59 +8,62 @@ type Bool {
 // Is true
 // Returns true if input is true
 is_true(a: Bool): Bool
-
-  ?i2
+  a
 
 // Is false
 // Returns true if input is false
 is_false(a: Bool): Bool
-
-  ?i
+  case a {
+    false: Bool.true
+    true: Bool.false
+  }
 
 // Negation
 // Returns the opposite of a Bool
 neg(b: Bool): Bool 
-
-  ?n
+  is_false(b)
 
 // And
 // Returns true if both inputs are true
 and(a: Bool, b: Bool): Bool
-
-  ?a
+  case a{
+    true: b
+    false: Bool.false
+  }
 
 // Or
 // Returs true if any input is true
 or(a: Bool, b: Bool): Bool
-
-  ?o
+  case a{
+    true: Bool.true
+    false: b
+  }
 
 // Equal
 // Returs true if both inputs are identical
 eql(a: Bool, b: Bool): Bool
-
-  ?e
+  case a {
+    true: b
+    false: neg(b)
+  }
 
 // Xor
 // Returns true if both inputs are different
 xor(a: Bool, b: Bool): Bool
-
-  ?x
+  neg(eql(a,b))
 
 // Nor
 // Returns true if both inputs are false
 nor(a: Bool, b: Bool): Bool
-
-  ?n2
+  neg(or(a,b))
 
 // Nand
 // Returns false only if both inputs are true
 nand(a: Bool, b: Bool): Bool
-
-  ?n3
+  neg(and(a,b))
 
 // Xnor
 // Returns true if both inputs are identical
 xnor(a: Bool, b: Bool): Bool
+  eql(a,b)
 
-  ?x2
