@@ -24,9 +24,22 @@ is_some(a: MaybeBool): Bool
 // eql(MaybeBool.some(Bool.false), MaybeBool.none            ) -> false
 // eql(MaybeBool.some(Bool.true),  MaybeBool.some(Bool.false)) -> false
 // eql(MaybeBool.some(Bool.false), MaybeBool.some(Bool.false)) -> true
+eql_bool(a: Bool, b: Bool): Bool
+  case a {
+    true: b
+    false: case b {
+      true: Bool.false
+      false: Bool.true
+    }
+  }
 eql(a: MaybeBool, b: MaybeBool): Bool
-// to do
-  Bool.false
+  case a {
+    none: is_none(b)
+    some: case b {
+      none: Bool.false
+      some: eql_bool(a.value, b.value)
+    }
+  }
 
 // Returns the value inside the MaybeBool.
 // If there is no value contained, returns v instead
@@ -48,6 +61,3 @@ or(a: MaybeBool, b: MaybeBool) : MaybeBool
     some: a
     none: b
   }
-
-ex_01: _
-  extract(create(Bool.false), Bool.true)
