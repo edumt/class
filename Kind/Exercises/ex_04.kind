@@ -7,18 +7,29 @@ type Nat {
 
 // Doubles a number
 dbl(a: Nat): Nat // double
-
-  ?b
+  case a {
+    zero: Nat.zero
+    succ: Nat.succ(Nat.succ(dbl(a.pred)))
+  }
 
 // Addition
 add(a: Nat, b: Nat): Nat
-
-  ?a
+  case a {
+    zero: b
+    succ: add(a.pred, Nat.succ(b))
+  }
 
 // Multiplication
 mul(a: Nat, b: Nat): Nat
-  
+// to do
   ?m
+  // case a {
+  //   zero: Nat.zero
+  //   succ: case a.pred {
+  //     zero: b
+  //     succ: mul(a.pred, add(a, b))
+  //   }
+  // }
 
 // Subtraction
 // 4 - 5 = 0
@@ -83,3 +94,8 @@ hlf(a: Nat): Nat
 div(a: Nat, b: Nat): Nat // division
   
   ?d
+
+ex_04: _
+  mul(dbl(Nat.succ(Nat.succ(Nat.zero))), Nat.zero)
+  // mul(dbl(Nat.succ(Nat.succ(Nat.zero))), dbl(Nat.succ(Nat.succ(Nat.zero))))
+  // mul(dbl(dbl(dbl(Nat.succ(Nat.succ(Nat.zero))))), dbl(Nat.succ(Nat.succ(Nat.zero))))
