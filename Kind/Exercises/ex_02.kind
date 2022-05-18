@@ -61,6 +61,3 @@ neg(pair: PairBool): PairBool
 swap(pair: PairBool): PairBool 
   open pair
   PairBool.new(pair.snd, pair.fst)
-
-ex_02: _
-  fst(PairBool.new(true, false))
