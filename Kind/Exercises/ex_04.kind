@@ -27,16 +27,27 @@ mul(a: Nat, b: Nat): Nat
   //   zero: Nat.zero
   //   succ: case a.pred {
   //     zero: b
-  //     succ: mul(a.pred, add(a, b))
+  //     succ: mul(a.pred, add(a, b)) // sum n from 1 to n
   //   }
   // }
+
+  // mul(5, 5   )
+  // mul(4, 5+5 )
+  // mul(3, 10+5)
+  // mul(2, 15+5)
+  // mul(1, 20+5)
 
 // Subtraction
 // 4 - 5 = 0
 // 5 - 4 = 1
 sub(a: Nat, b: Nat): Nat
-
-  ?s
+  case a {
+    zero: Nat.zero
+    succ: case b {
+      zero: a
+      succ: sub(a.pred, b.pred)
+    }
+  }
 
 // Factorial
 // 4! = 24
@@ -46,8 +57,13 @@ fac(a: Nat): Nat
 
 // Equal
 eql(a: Nat, b: Nat): Bool // Given 2 numbers, it returns true if the 2 are the same and false if they are different.
-  
-  ?e 
+  case sub(a,b) {
+    succ: Bool.false
+    zero: case sub(b,a) {
+      zero: Bool.true
+      succ: Bool.false
+    }
+  }
 
 // Do not use the "not" function to create the functions below
 
@@ -55,29 +71,37 @@ eql(a: Nat, b: Nat): Bool // Given 2 numbers, it returns true if the 2 are the s
 // 2 > 1 = True
 // 3 > 3 = False
 gtn(a: Nat, b: Nat): Bool // if A > B == True else false
-  
-  ?g
+  case sub(a, b) {
+    zero: false
+    succ: true
+  }
 
 // Lower than
 // 1 < 2 = True
 // 3 < 3 = False
 ltn(a: Nat, b: Nat): Bool // if A > B == False else true 
-  
-  ?l
+  case sub(b, a) {
+    zero: false
+    succ: true
+  }
 
 // Minimum
 // min(2, 3) = 2
 // min(4, 1) = 1
 min(a: Nat, b: Nat): Nat // if A < B then A else B
-  
-  ?m2
+  case ltn(a,b) {
+    true: a
+    false: b
+  }
 
 // Maximum
 // max(2, 3) = 3
 // max(4, 1) = 4
 max(a: Nat, b: Nat): Nat // if A > B then A else B
-  
-  ?m3
+  case gtn(a,b) {
+    true: a
+    false: b
+  }
 
 
 // Divides a number by two
@@ -85,7 +109,13 @@ max(a: Nat, b: Nat): Nat // if A > B then A else B
 // 5 / 2 = 2
 // 1 / 2 = 0
 hlf(a: Nat): Nat
-  ?h
+  case a {
+    zero: Nat.zero
+    succ: case a.pred {
+      zero: Nat.zero
+      succ: Nat.succ(hlf(a.pred.pred))
+    }
+  }
 
 // Division
 // 1 / 2 = 0
@@ -96,6 +126,8 @@ div(a: Nat, b: Nat): Nat // division
   ?d
 
 ex_04: _
-  mul(dbl(Nat.succ(Nat.succ(Nat.zero))), Nat.zero)
+  hlf(dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))))
+  // ltn( dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))), dbl(dbl(dbl(dbl(Nat.succ(Nat.zero))))))
+  // mul(dbl(dbl(Nat.succ(Nat.succ(Nat.zero)))), Nat.succ(Nat.zero))
   // mul(dbl(Nat.succ(Nat.succ(Nat.zero))), dbl(Nat.succ(Nat.succ(Nat.zero))))
   // mul(dbl(dbl(dbl(Nat.succ(Nat.succ(Nat.zero))))), dbl(Nat.succ(Nat.succ(Nat.zero))))
