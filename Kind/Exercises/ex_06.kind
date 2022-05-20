@@ -98,27 +98,57 @@ int(sign: Bool, num: Nat): Inte
 // int(false, 2)     = -1
 // int(true,  2)     = +3
 inc(a: Inte): Inte  
-  ?inc
+  case a {
+    pos: Inte.pos(Pos.succ(a.num))
+    neg: case a.num {
+      one: Inte.pos(Pos.zero)
+      pred: Inte.neg(a.num.succ)
+    }
+  }
 
 // Decrements an Integer
 // int(false, 1) = -2
 // int(true,  2) = +1
 // int(true,  0) = -1
 dec(a: Inte): Inte
-  ?dec
+  case a {
+    neg: Inte.neg(Neg.pred(a.num))
+    pos: case a.num {
+      zero: Inte.neg(Neg.one)
+      succ: Inte.pos(a.num.pred)
+    }
+  }
 
 // Doubles an Integer
 // int(false, 4) = -8
 // int(false, 1) = -2
 // int(true,  2) = +4
 dbl(a: Inte): Inte 
-  ?dbl
+  case a {
+    neg: case a.num {
+      one: Inte.neg(Neg.pred(Neg.one))
+      pred: dec(dec(dbl(Inte.neg(a.num.succ))))
+    }
+    pos: case a.num {
+      zero: Inte.pos(Pos.zero)
+      succ: inc(inc(dbl(Inte.pos(a.num.pred))))
+    }
+  }
 
 // Adds two Integers
 // int(false, 4) + int(false, 2) = -6
 // int(false, 4) + int(true,  2) = -2
 add(a: Inte, b: Inte): Inte
-  ?add
+  case b {
+    neg: case b.num {
+      one: dec(a)
+      pred: add(dec(a), inc(b))
+    }
+    pos: case b.num {
+      zero: a
+      succ: add(a, dec(b))
+    }
+  }
 
 // Multiplies two Integers
 // int(false, 2) * int(true, 3)  = -6
@@ -130,7 +160,16 @@ mul(a: Inte, b: Inte): Inte
 // int(false, 6) - int(false, 6) = +0
 // int(false, 4) - int(false, 6) = +2
 sub(a: Inte, b: Inte): Inte
-  ?sub
+  case b {
+    neg: case b.num {
+      one: inc(a)
+      pred: sub(inc(a), inc(b))
+    }
+    pos: case b.num {
+      zero: a
+      succ: sub(dec(a), dec(b))
+    }
+  }
 
 // Equal
 eql(a: Inte, b: Inte): Bool // Given two Integers, returns true if both are the same and false otherwise.
@@ -178,3 +217,10 @@ hlf(a: Inte): Inte
 // int(true,  10) / int(false, 12) = +0
 div(a: Inte, b: Inte): Inte 
   ?div
+
+ex_06: _
+  let one = Inte.pos(Pos.succ(Pos.zero))
+  let mone = Inte.neg(Neg.one)
+  inte_show(sub(dbl(dbl(mone)), dbl(dbl(mone))))
+  // inte_show(dbl(dbl(dbl(mone))))
+  // inte_show(dbl(dbl(mone)))
