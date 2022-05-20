@@ -24,7 +24,6 @@ add(a: Nat, b: Nat): Nat
 //   case a {
 //     zero: acc
 //     succ: mul_aux(a.pred, b, add(acc, b))
-    
 //   }
 mul(a: Nat, b: Nat): Nat
   // mul_aux(a, b, Nat.zero)
@@ -51,8 +50,10 @@ sub(a: Nat, b: Nat): Nat
 // Factorial
 // 4! = 24
 fac(a: Nat): Nat 
-  
-  ?f
+  case a {
+    zero: Nat.succ(a)
+    succ: mul(a, fac(a.pred))
+  }
 
 // Equal
 eql(a: Nat, b: Nat): Bool // Given 2 numbers, it returns true if the 2 are the same and false if they are different.
@@ -121,13 +122,15 @@ hlf(a: Nat): Nat
 // x / 0 = 0
 // 5 / 2 = 2
 div(a: Nat, b: Nat): Nat // division
-  
-  ?d
-
-ex_04: _
-  let one = Nat.succ(Nat.zero)
-  // hlf(dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))))
-  // ltn( dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))), dbl(dbl(dbl(dbl(Nat.succ(Nat.zero))))))
-  mul(dbl(dbl(dbl(one))), dbl(one))
-  // mul(dbl(Nat.succ(Nat.succ(Nat.zero))), dbl(Nat.succ(Nat.succ(Nat.zero))))
-  // mul(dbl(dbl(dbl(Nat.succ(Nat.succ(Nat.zero))))), dbl(Nat.succ(Nat.succ(Nat.zero))))
+  let zero = Nat.zero
+  let one = Nat.succ(zero)
+  case b {
+    zero: zero
+    succ: case b.pred {
+      zero: a
+      succ: case ltn(a, b) {
+        true: zero
+        false:  add(one, div(sub(a,b), b))
+      }
+    }
+  }
