@@ -20,22 +20,21 @@ add(a: Nat, b: Nat): Nat
   }
 
 // Multiplication
+// mul_aux(a: Nat, b: Nat, acc: Nat): Nat 
+//   case a {
+//     zero: acc
+//     succ: mul_aux(a.pred, b, add(acc, b))
+    
+//   }
 mul(a: Nat, b: Nat): Nat
-// to do
-  ?m
-  // case a {
-  //   zero: Nat.zero
-  //   succ: case a.pred {
-  //     zero: b
-  //     succ: mul(a.pred, add(a, b)) // sum n from 1 to n
-  //   }
-  // }
-
-  // mul(5, 5   )
-  // mul(4, 5+5 )
-  // mul(3, 10+5)
-  // mul(2, 15+5)
-  // mul(1, 20+5)
+  // mul_aux(a, b, Nat.zero)
+  case a {
+    zero: Nat.zero
+    succ: case a.pred {
+      zero: b
+      succ: add(b, mul(a.pred, b))
+    }
+  }
 
 // Subtraction
 // 4 - 5 = 0
@@ -126,8 +125,9 @@ div(a: Nat, b: Nat): Nat // division
   ?d
 
 ex_04: _
-  hlf(dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))))
+  let one = Nat.succ(Nat.zero)
+  // hlf(dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))))
   // ltn( dbl(dbl(dbl(dbl(dbl(Nat.succ(Nat.zero)))))), dbl(dbl(dbl(dbl(Nat.succ(Nat.zero))))))
-  // mul(dbl(dbl(Nat.succ(Nat.succ(Nat.zero)))), Nat.succ(Nat.zero))
+  mul(dbl(dbl(dbl(one))), dbl(one))
   // mul(dbl(Nat.succ(Nat.succ(Nat.zero))), dbl(Nat.succ(Nat.succ(Nat.zero))))
   // mul(dbl(dbl(dbl(Nat.succ(Nat.succ(Nat.zero))))), dbl(Nat.succ(Nat.succ(Nat.zero))))
