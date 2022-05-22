@@ -146,7 +146,7 @@ add(a: Inte, b: Inte): Inte
     }
     pos: case b.num {
       zero: a
-      succ: add(a, dec(b))
+      succ: add(inc(a), dec(b))
     }
   }
 
@@ -154,7 +154,17 @@ add(a: Inte, b: Inte): Inte
 // int(false, 2) * int(true, 3)  = -6
 // int(false, 4) * int(false, 5) = +20
 mul(a: Inte, b: Inte): Inte
-  ?mul
+  let zero = Inte.pos(Pos.zero)
+  case b {
+    neg: case b.num {
+      one: sub(zero, a) // 0 - a === -a
+      pred: add(sub(zero, a), mul(a, inc(b)))
+    }
+    pos: case b.num {
+      zero: zero
+      succ: add(a, mul(a, dec(b)))
+    }
+  }
 
 // Subtracts two Integers
 // int(false, 6) - int(false, 6) = +0
@@ -173,7 +183,14 @@ sub(a: Inte, b: Inte): Inte
 
 // Equal
 eql(a: Inte, b: Inte): Bool // Given two Integers, returns true if both are the same and false otherwise.
-  ?eql
+  let diff = sub(a,b)
+  case diff {
+    neg: Bool.false
+    pos: case diff.num {
+      zero: Bool.true
+      succ: Bool.false
+    }
+  }
 
 
 // Greater than
@@ -182,25 +199,57 @@ eql(a: Inte, b: Inte): Bool // Given two Integers, returns true if both are the 
 // int(false, 2) > int(true,  0) = False
 // int(true,  0) > int(false, 2) = True
 gtn(a: Inte, b: Inte): Bool // if A > B then True else false
-  ?gtn
+  let diff = sub(a,b)
+  case a {
+    neg: case diff {
+      pos: Bool.false
+      neg: Bool.true
+    }
+    pos: case diff {
+      pos: case diff.num {
+        zero: Bool.false
+        succ: Bool.true
+      }
+      neg: Bool.false
+    }
+  }
 
 // Lower than
 // int(false, 1) < int(true,  0) = True
 // int(true,  0) < int(false, 1) = False
 ltn(a: Inte, b: Inte): Bool // if A > B then False else true
-  ?ltn
+  let diff = sub(a,b)
+  case a {
+    neg: case diff {
+      pos: case diff.num {
+        zero: Bool.false
+        succ: Bool.true
+      }
+      neg: Bool.false
+    }
+    pos: case diff {
+      pos: Bool.false
+      neg: Bool.true
+    }
+  }
 
 // Minimum
 // min(int(false, 1), int(true,  0)  = -1
 // min(int(false, 1), int(false, 3)) = -3
 min(a: Inte, b: Inte): Inte // if A < B then A else B
-  ?min
+  case ltn(a,b) {
+    true: a
+    false: b
+  }
 
 // Maximum
 // max(int(false, 1), int(true,  0)) = +0
 // max(int(false, 1), int(false, 3)) = -1
 max(a: Inte, b: Inte): Inte // if A > B then A else B
-  ?max
+  case gtn(a,b) {
+    true: a
+    false: b
+  }
 
 // Half
 // Divides an Integer by two
@@ -208,7 +257,22 @@ max(a: Inte, b: Inte): Inte // if A > B then A else B
 // int(false, 1) = +0
 // int(true,  6) = +3
 hlf(a: Inte): Inte
-  ?hlf
+  let zero = Inte.pos(Pos.zero)
+  let one = Inte.pos(Pos.succ(Pos.zero))
+  let mone = Inte.neg(Neg.one)
+  case a {
+    neg: case a.num {
+      one: zero
+      pred: add(mone, hlf(inc(inc(a))))
+    }
+    pos: case a.num {
+      zero: zero
+      succ: case a.num.pred {
+        zero: zero
+        succ: add(one, hlf(dec(dec(a))))
+      }
+    }
+  }
 
 // Division
 // int(true,  2)  / int(true,  2)  = +1
@@ -216,11 +280,17 @@ hlf(a: Inte): Inte
 // int(false, 11) / int(false, 5)  = +2
 // int(true,  10) / int(false, 12) = +0
 div(a: Inte, b: Inte): Inte 
-  ?div
-
-ex_06: _
-  let one = Inte.pos(Pos.succ(Pos.zero))
-  let mone = Inte.neg(Neg.one)
-  inte_show(sub(dbl(dbl(mone)), dbl(dbl(mone))))
-  // inte_show(dbl(dbl(dbl(mone))))
-  // inte_show(dbl(dbl(mone)))
+  let zero = Inte.pos(Pos.zero)
+  let one = inc(zero)
+  case a b {
+    pos pos: case b.num {
+      zero: zero
+      succ: case ltn(a,b) {
+        true: zero
+        false: add(one, div(sub(a,b), b))
+      }
+    }
+    neg pos: sub(zero, div(sub(zero, a), b)) // div(-a,b)  === -div(a,b)
+    pos neg: sub(zero, div(a, sub(zero, b))) // div(a,-b)  === -div(a,b)
+    neg neg: div(sub(zero, a), sub(zero, b)) // div(-a,-b) ===  div(a,b)
+  }
