@@ -126,11 +126,8 @@ div(a: Nat, b: Nat): Nat // division
   let one = Nat.succ(zero)
   case b {
     zero: zero
-    succ: case b.pred {
-      zero: a
-      succ: case ltn(a, b) {
+    succ: case ltn(a, b) {
         true: zero
         false:  add(one, div(sub(a,b), b))
       }
-    }
   }
