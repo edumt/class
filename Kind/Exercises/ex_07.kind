@@ -25,9 +25,11 @@ type Bits {
 //is_empty(d)      -> Bool.false
 //is_empty(Bits.e) -> Bool.true
 is_empty(b: Bits): Bool
-  ?is_empty
-
-
+  case b {
+    e: true
+    o: false
+    i: false
+  }
 
 //Gets the Tail of a Bits structure
 
@@ -36,8 +38,11 @@ is_empty(b: Bits): Bool
 //tail(c) -> Bits.o(Bits.i(Bits.i(Bits.e)))
 //tail(d) -> Bits.i(Bits.i(Bits.i(Bits.e)))
 tail(b: Bits): Bits
-  ?tail
-
+  case b {
+    e: Bits.e
+    o: b.pred
+    i: b.pred
+  }
 
 //Negates all Bits
 
@@ -46,10 +51,11 @@ tail(b: Bits): Bits
 //notb(c) -> Bits.i(Bits.i(Bits.o(Bits.o(Bits.e))))
 //notb(d) -> Bits.o(Bits.o(Bits.o(Bits.o(Bits.e))))
 notb(b: Bits): Bits
-  ?notb
-
-
-
+  case b {
+    e: Bits.e
+    o: Bits.i(notb(b.pred))
+    i: Bits.o(notb(b.pred))
+  }
 
 //Increments a Bit
 
@@ -58,9 +64,11 @@ notb(b: Bits): Bits
 //inc(c) -> Bits.i(Bits.o(Bits.i(Bits.i(Bits.e))))
 //inc(d) -> Bits.o(Bits.o(Bits.o(Bits.o(Bits.i(Bits.e)))))
 inc(b: Bits): Bits
-  ?inc
-
-
+  case b {
+    e: Bits.i(Bits.e)
+    o: Bits.i(b.pred)
+    i: Bits.o(inc(b.pred))
+  }
 
 //Decrements a Bit
 
@@ -69,10 +77,11 @@ inc(b: Bits): Bits
 //dec(c) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.e))))
 //dec(d) -> Bits.o(Bits.i(Bits.i(Bits.i(Bits.e))))
 dec(b: Bits): Bits
-  ?dec
-
-
-
+  case b {
+    e: Bits.e
+    o: Bits.i(dec(b.pred))
+    i: Bits.o(b.pred)
+  }
 
 //Concatenate two Bits structures
 
@@ -80,9 +89,11 @@ dec(b: Bits): Bits
 //concat(b,c) -> Bits.o(Bits.i(Bits.i(Bits.o(Bits.o(Bits.i(Bits.i(Bits.e)))))))
 //concat(c,d) -> Bits.o(Bits.o(Bits.i(Bits.i(Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))))))
 concat(a: Bits, b: Bits): Bits
-  ?concat
-
-
+  case a {
+    e: b
+    o: Bits.o(concat(a.pred, b))
+    i: Bits.i(concat(a.pred, b))
+  }
 
 //Adds two Bits structures
 
@@ -90,9 +101,18 @@ concat(a: Bits, b: Bits): Bits
 //add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.o(Bits.e))))))
 //add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.o(Bits.i(Bits.e))))))
 add(a: Bits, b: Bits): Bits 
-  ?add
-
-
+  // to do
+  case a b {
+    e e: Bits.e
+    e o: b
+    e i: b
+    o e: a
+    i e: a
+    o o: Bits.o(add(a.pred,b.pred))
+    o i: Bits.i(add(a.pred,b.pred))
+    i o: Bits.i(add(a.pred,b.pred))
+    i i: Bits.o(add(add(a.pred,b.pred), Bits.i(Bits.e)))
+  }
 
 //Returns Bits.i if only both bits are Bits.i
 
@@ -100,9 +120,17 @@ add(a: Bits, b: Bits): Bits
 //and(b,c) -> Bits.o(Bits.o(Bits.i(Bits.e)))
 //and(c,d) -> Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
 and(a: Bits, b: Bits): Bits
-  ?and
-
-
+  case a b {
+    e e: Bits.e
+    e o: Bits.e
+    e i: Bits.e
+    o e: Bits.e
+    i e: Bits.e
+    o o: Bits.o(and(a.pred,b.pred))
+    o i: Bits.o(and(a.pred,b.pred))
+    i o: Bits.o(and(a.pred,b.pred))
+    i i: Bits.i(and(a.pred,b.pred))
+  }
 
 //Returns Bits.i if any of bits are Bits.i
 
@@ -110,9 +138,17 @@ and(a: Bits, b: Bits): Bits
 //or(b,c) -> Bits.o(Bits.i(Bits.i(Bits.i(Bits.e))))
 //or(c,d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
 or(a: Bits, b: Bits): Bits
-  ?or
-
-
+  case a b {
+    e e: Bits.e
+    e o: Bits.e
+    o e: Bits.e
+    e i: b
+    i e: a
+    o o: Bits.o(or(a.pred,b.pred))
+    o i: Bits.i(or(a.pred,b.pred))
+    i o: Bits.i(or(a.pred,b.pred))
+    i i: Bits.i(or(a.pred,b.pred))
+  }
 
 //Verifies if both Bit structures are equal
 
@@ -120,16 +156,20 @@ or(a: Bits, b: Bits): Bits
 //eql(b,c) -> Bool.false
 //eql(d,d) -> Bool.true
 eql(a: Bits, b: Bits): Bool
-  ?eql
-
-
+  case a b {
+    e e: Bool.true
+    o o: eql(a.pred,b.pred)
+    i i: eql(a.pred,b.pred)
+  } default Bool.false
 
 //Reverses a Bits structure
 
 reverse_go(b: Bits, acum: Bits): Bits
-  ?reverse_go
-  
-
+  case b {
+    e: acum
+    o: reverse_go(b.pred, Bits.o(acum))
+    i: reverse_go(b.pred, Bits.i(acum))
+  }
 
 //reverse(a) -> Bits.i(Bits.i(Bits.e))
 //reverse(b) -> Bits.i(Bits.i(Bits.o(Bits.e)))
@@ -138,25 +178,16 @@ reverse_go(b: Bits, acum: Bits): Bits
 reverse(b: Bits): Bits
   reverse_go(b, Bits.e)
 
-
-
-
 //Gets the length of the Bits structure
-
-length_go(bs: Bits, acum: Nat): Nat
-  ?length_go
-
-
-
 
 //length(a) -> Nat.succ(Nat.succ(Nat.zero))
 //length(b) -> Nat.succ(Nat.succ(Nat.succ(Nat.zero)))
 //length(c) -> Nat.succ(Nat.succ(Nat.succ(Nat.succ(Nat.zero))))
 //length(d) -> 4
 length(bs: Bits): Nat
-  length_go(bs, 0)
-
-
+  case bs {
+    e: Nat.zero
+  } default Nat.succ(length(bs.pred))
 
 //Multiplies two Bits structures
 
@@ -190,3 +221,10 @@ drop(n: Nat, bs: Bits): Bits
 //take(4, d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
 take(n: Nat, bs: Bits): Bits
   ?take
+
+ex_07: _
+  let a = Bits.i(Bits.i(Bits.e))
+  let b = Bits.o(Bits.i(Bits.i(Bits.e)))
+  let c = Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
+  let d = Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
+  length(d)
