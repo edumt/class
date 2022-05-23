@@ -31,6 +31,8 @@ is_empty(b: Bits): Bool
     i: false
   }
 
+
+
 //Gets the Tail of a Bits structure
 
 //tail(a) -> Bits.i(Bits.e)
@@ -43,6 +45,8 @@ tail(b: Bits): Bits
     o: b.pred
     i: b.pred
   }
+
+
 
 //Negates all Bits
 
@@ -57,6 +61,8 @@ notb(b: Bits): Bits
     i: Bits.o(notb(b.pred))
   }
 
+
+
 //Increments a Bit
 
 //inc(a) -> Bits.o(Bits.o(Bits.i(Bits.e)))
@@ -69,6 +75,8 @@ inc(b: Bits): Bits
     o: Bits.i(b.pred)
     i: Bits.o(inc(b.pred))
   }
+
+
 
 //Decrements a Bit
 
@@ -83,6 +91,8 @@ dec(b: Bits): Bits
     i: Bits.o(b.pred)
   }
 
+
+
 //Concatenate two Bits structures
 
 //concat(a,b) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)
@@ -94,6 +104,8 @@ concat(a: Bits, b: Bits): Bits
     o: Bits.o(concat(a.pred, b))
     i: Bits.i(concat(a.pred, b))
   }
+
+
 
 //Adds two Bits structures
 
@@ -114,6 +126,8 @@ add(a: Bits, b: Bits): Bits
     i i: Bits.o(add(add(a.pred,b.pred), Bits.i(Bits.e)))
   }
 
+
+
 //Returns Bits.i if only both bits are Bits.i
 
 //and(a,b) -> Bits.o(Bits.i(Bits.e))
@@ -131,6 +145,8 @@ and(a: Bits, b: Bits): Bits
     i o: Bits.o(and(a.pred,b.pred))
     i i: Bits.i(and(a.pred,b.pred))
   }
+
+
 
 //Returns Bits.i if any of bits are Bits.i
 
@@ -150,6 +166,8 @@ or(a: Bits, b: Bits): Bits
     i i: Bits.i(or(a.pred,b.pred))
   }
 
+
+
 //Verifies if both Bit structures are equal
 
 //eql(a,b) -> Bool.false
@@ -161,6 +179,8 @@ eql(a: Bits, b: Bits): Bool
     o o: eql(a.pred,b.pred)
     i i: eql(a.pred,b.pred)
   } default Bool.false
+
+
 
 //Reverses a Bits structure
 
@@ -178,6 +198,8 @@ reverse_go(b: Bits, acum: Bits): Bits
 reverse(b: Bits): Bits
   reverse_go(b, Bits.e)
 
+
+
 //Gets the length of the Bits structure
 
 //length(a) -> Nat.succ(Nat.succ(Nat.zero))
@@ -189,16 +211,27 @@ length(bs: Bits): Nat
     e: Nat.zero
   } default Nat.succ(length(bs.pred))
 
+
+
 //Multiplies two Bits structures
 
-mul_go(a: Bits, b: Bits, acum: Bits): Bits
-  ?mul_go
+// mul_go(a: Bits, b: Bits, acum: Bits): Bits
+//   ?mul_go
 
 
 //mul(a,b) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //mul(b,c) -> Bits.o(Bits.o(Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))))
 mul(a: Bits, b: Bits): Bits
-  mul_go(a, b, Bits.e)
+  case a {
+    e: Bits.e
+    i: case a.pred {
+      e: b
+    } default add(b, mul(dec(a), b))
+    o: case a.pred {
+      e: Bits.o(Bits.e)
+    } default add(b, mul(dec(a), b))
+  }
+  // mul_go(a, b, Bits.e)
 
 
 
@@ -209,8 +242,13 @@ mul(a: Bits, b: Bits): Bits
 //drop(1, c) -> Bits.o(Bits.i(Bits.i(Bits.e)))
 //drop(1, d) -> Bits.i(Bits.i(Bits.i(Bits.e)))
 drop(n: Nat, bs: Bits): Bits
-  ?drop
-  
+  case n {
+    zero: bs
+    succ: case bs {
+      e: Bits.e
+    } default drop(n.pred, bs.pred)
+  }
+
 
 
 //Takes n Bits from the structure, starting from the least significative bit
@@ -220,11 +258,27 @@ drop(n: Nat, bs: Bits): Bits
 //take(3, c) -> Bits.o(Bits.o(Bits.i(Bits.e)))
 //take(4, d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
 take(n: Nat, bs: Bits): Bits
-  ?take
+  case n {
+    zero: Bits.e
+    succ: case bs {
+      e: Bits.e
+      o: Bits.o(take(n.pred,bs.pred))
+      i: Bits.i(take(n.pred,bs.pred))
+    }
+  }
 
 ex_07: _
   let a = Bits.i(Bits.i(Bits.e))
   let b = Bits.o(Bits.i(Bits.i(Bits.e)))
   let c = Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
   let d = Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
-  length(d)
+  let e = Bits.i(Bits.i(Bits.e))
+  mul(e,e)
+
+
+
+  // 11 11
+  // 01 11 -> 11
+  // 1 11 -> 11 + 11
+  // 0 11 -> 11 + 11 + 11
+  //  -> 11 + 11 + 11 + 0
