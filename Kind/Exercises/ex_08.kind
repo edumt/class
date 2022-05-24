@@ -38,3 +38,7 @@ reverse<A: Type>(xs: List<A>): List<A>
 
 reverse.go<A: Type>(new_list: List<A>, old_list: List<A>): List<A>
   ?r
+
+// ex_08: _
+  // let a = List<Nat>.cons(Nat.succ(Nat.zero), List<Nat>.cons(Nat.succ(Nat.succ(Nat.zero)), List<Nat>.nil))
+  // a
