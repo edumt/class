@@ -7,15 +7,26 @@ type List <A: Type> {
 
 // Returns the list without the first element
 tail<A: Type>(xs: List<A>): List<A>
-  ?a
+  case xs {
+    nil: xs
+    cons: xs.tail
+  }
 
 // Returns the length of a list
 length<A: Type>(xs: List<A>): Nat
-  ?a
+  case xs {
+    nil: Nat.zero
+    cons: Nat.add(1, length<A>(xs.tail))
+  }
 
 // Concatenates two lists
 concat<A: Type>(xs: List<A>, ys: List<A>): List<A>
+  // to do
   ?a
+  // case xs {
+  //   nil: ys
+  //   cons: List<A>.cons(xs.head,concat(xs.tail,ys))
+  // }
 
 // Applies a function to all elements of a list
 map<A: Type, B: Type>(fn: A -> B, xs: List<A>): List<B>
