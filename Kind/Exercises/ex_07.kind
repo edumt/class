@@ -275,7 +275,7 @@ ex_07: _
   let e = Bits.i(Bits.i(Bits.e))
   mul(e,e)
 
-
+  // to do: check overflow on all operations
 
   // 11 11
   // 01 11 -> 11
