@@ -87,7 +87,10 @@ inc(b: Bits): Bits
 dec(b: Bits): Bits
   case b {
     e: Bits.e
-    o: Bits.i(dec(b.pred))
+    o: case Bits.to_nat(b.pred) { //avoiding negative overflow
+      zero: Bits.o(Bits.e)
+      succ: Bits.i(dec(b.pred))
+    }
     i: Bits.o(b.pred)
   }
 
@@ -215,23 +218,17 @@ length(bs: Bits): Nat
 
 //Multiplies two Bits structures
 
-// mul_go(a: Bits, b: Bits, acum: Bits): Bits
-//   ?mul_go
-
-
 //mul(a,b) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //mul(b,c) -> Bits.o(Bits.o(Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))))
 mul(a: Bits, b: Bits): Bits
   case a {
     e: Bits.e
-    i: case a.pred {
-      e: b
-    } default add(b, mul(dec(a), b))
-    o: case a.pred {
-      e: Bits.o(Bits.e)
-    } default add(b, mul(dec(a), b))
+    i: add(b, mul(dec(a), b))
+    o: case Bits.to_nat(a.pred) { // avoiding negative overflow
+      zero: Bits.o(Bits.e)
+      succ: add(b, mul(dec(a), b)) 
+    } 
   }
-  // mul_go(a, b, Bits.e)
 
 
 
@@ -266,19 +263,3 @@ take(n: Nat, bs: Bits): Bits
       i: Bits.i(take(n.pred,bs.pred))
     }
   }
-
-ex_07: _
-  let a = Bits.i(Bits.i(Bits.e))
-  let b = Bits.o(Bits.i(Bits.i(Bits.e)))
-  let c = Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
-  let d = Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
-  let e = Bits.i(Bits.i(Bits.e))
-  mul(e,e)
-
-  // to do: check overflow on all operations
-
-  // 11 11
-  // 01 11 -> 11
-  // 1 11 -> 11 + 11
-  // 0 11 -> 11 + 11 + 11
-  //  -> 11 + 11 + 11 + 0
