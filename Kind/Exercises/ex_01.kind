@@ -1,11 +1,11 @@
 // type MaybeBool
 // It maybe holds a Boolean inside it
+
 type MaybeBool { 
   none 
   some(value: Bool)
  }
-
-// Returns true if Maybe is none
+ // Returns true if Maybe is none
 is_none(a: MaybeBool): Bool
   case a {
     none: Bool.true
@@ -45,8 +45,8 @@ eql(a: MaybeBool, b: MaybeBool): Bool
 // If there is no value contained, returns v instead
 extract(a: MaybeBool, v: Bool): Bool
   case a {
-    none: v
     some: a.value
+    none: v
   }
 
 // Create a MaybeBool from a Boolean
@@ -60,4 +60,15 @@ or(a: MaybeBool, b: MaybeBool) : MaybeBool
   case a {
     some: a
     none: b
+  }
+
+
+ex_01: IO<Unit>
+  IO {
+    Tests._01.is_none(is_none)
+    Tests._01.is_some(is_some)
+    Tests._01.eql(eql)
+    Tests._01.extract(extract)
+    Tests._01.create(create)
+    Tests._01.or(or)
   }

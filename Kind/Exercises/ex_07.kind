@@ -113,8 +113,8 @@ concat(a: Bits, b: Bits): Bits
 //Adds two Bits structures
 
 //add(a,b) -> Bits.i(Bits.o(Bits.o(Bits.i(Bits.e))))
-//add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.o(Bits.e))))))
-//add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.o(Bits.i(Bits.e))))))
+//add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
+//add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)))))
 add(a: Bits, b: Bits): Bits 
   // to do
   case a b {
@@ -128,6 +128,7 @@ add(a: Bits, b: Bits): Bits
     i o: Bits.i(add(a.pred,b.pred))
     i i: Bits.o(add(add(a.pred,b.pred), Bits.i(Bits.e)))
   }
+
 
 
 
@@ -148,7 +149,6 @@ and(a: Bits, b: Bits): Bits
     i o: Bits.o(and(a.pred,b.pred))
     i i: Bits.i(and(a.pred,b.pred))
   }
-
 
 
 //Returns Bits.i if any of bits are Bits.i
@@ -208,7 +208,7 @@ reverse(b: Bits): Bits
 //length(a) -> Nat.succ(Nat.succ(Nat.zero))
 //length(b) -> Nat.succ(Nat.succ(Nat.succ(Nat.zero)))
 //length(c) -> Nat.succ(Nat.succ(Nat.succ(Nat.succ(Nat.zero))))
-//length(d) -> 4
+//length(d) -> Nat.succ(Nat.succ(Nat.succ(Nat.succ(Nat.zero))))
 length(bs: Bits): Nat
   case bs {
     e: Nat.zero
@@ -262,4 +262,22 @@ take(n: Nat, bs: Bits): Bits
       o: Bits.o(take(n.pred,bs.pred))
       i: Bits.i(take(n.pred,bs.pred))
     }
+  }
+
+ex_07: IO<Unit>
+  IO {
+    Tests._07.is_empty(is_empty)
+    Tests._07.tail(tail)
+    Tests._07.not(notb)
+    Tests._07.inc(inc)
+    Tests._07.dec(dec)
+    Tests._07.concat(concat)
+    Tests._07.add(add)
+    Tests._07.and(and)
+    Tests._07.eql(eql)
+    Tests._07.reverse(reverse)
+    Tests._07.length(length)
+    Tests._07.mul(mul)
+    Tests._07.drop(drop)
+    Tests._07.take(take)
   }

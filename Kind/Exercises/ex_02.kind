@@ -61,3 +61,16 @@ neg(pair: PairBool): PairBool
 swap(pair: PairBool): PairBool 
   open pair
   PairBool.new(pair.snd, pair.fst)
+
+
+ex_02: IO<Unit>
+  IO {
+    Tests._02.fst(fst)
+    Tests._02.snd(snd)
+    Tests._02.eql_elements(eql_elements)
+    Tests._02.eql(eql)
+    Tests._02.not_eql(not_eql)
+    Tests._02.create(create)
+    Tests._02.neg(neg)
+    Tests._02.swap(swap)
+  }

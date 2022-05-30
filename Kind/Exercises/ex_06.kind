@@ -294,3 +294,21 @@ div(a: Inte, b: Inte): Inte
     pos neg: sub(zero, div(a, sub(zero, b))) // div(a,-b)  === -div(a,b)
     neg neg: div(sub(zero, a), sub(zero, b)) // div(-a,-b) ===  div(a,b)
   }
+  
+
+ex_06: IO<Unit>
+  IO {
+    Tests._06.inc(inc)
+    Tests._06.dec(dec)
+    Tests._06.dbl(dbl)
+    Tests._06.add(add)
+    Tests._06.mul(mul)
+    Tests._06.sub(sub)
+    Tests._06.eql(eql)
+    Tests._06.gtn(gtn)
+    Tests._06.ltn(ltn)
+    Tests._06.min(min)
+    Tests._06.max(max)
+    Tests._06.hlf(hlf)
+    Tests._06.div(div)
+  }
