@@ -14,19 +14,43 @@ type Maybe <A: Type> {
 // Ex: zip!!([1,2], ["a","b","c"]) == [{1, "a"}, {2 , "b"}]
 // Ex: zip!!(["a", "b"], [3, 5])   == [{"a", 3}, {2 , "b"}]
 zip<A: Type, B: Type>(xs: List<A>, ys: List<B>): List<Pair<A,B>>
-  ?a
+  case xs ys {
+    cons cons: List.cons<Pair<A,B>>(Pair.new<A,B>(xs.head, ys.head), zip<A,B>(xs.tail, ys.tail))
+  } default List.nil<Pair<A,B>>
 
 // Returns the smallest element of a List
+extract(a: Maybe<Nat>, v: Nat): Nat
+  case a {
+    some: a.value
+    none: v
+  }
+
 smallest(xs: List<Nat>): Maybe<Nat>
-  ?s
+  case xs {
+    nil: Maybe.none<Nat>
+    cons: Maybe.some<Nat>(Nat.min(xs.head, extract(smallest(xs.tail), xs.head)))
+  }
 
 // Returns the same list without the smallest element
 delete_smallest(xs: List<Nat>): List<Nat>
-  ?d
+  case xs {
+    nil: List.nil<Nat>
+    cons: 
+      let min = extract(smallest(xs), xs.head)
+      case Nat.eql(min, xs.head) {
+        true: xs.tail
+        false: List.cons<Nat>(xs.head, delete_smallest(xs.tail))
+      }
+  }
 
 // Returns the same list, in ascending order
 sort_ascending(xs: List<Nat>): List<Nat>
-  ?a
+  case xs {
+    nil: List.nil<Nat>
+    cons:
+      let min = extract(smallest(xs), xs.head)
+      List.cons<Nat>(min, sort_ascending(delete_smallest(xs)))
+  }
 
 // Returns an element at an index from the list
 // if there is an element at that index
@@ -34,10 +58,19 @@ sort_ascending(xs: List<Nat>): List<Nat>
 // else
 //   returns Maybe.none!
 get<A: Type>(idx: Nat, xs: List<A>): Maybe<A>
-  ?g
+  case idx xs {
+    zero cons: Maybe.some<A>(xs.head)
+    succ cons: get<A>(idx.pred, xs.tail)
+  } default Maybe.none<A>
 
 // Removes all elements that does not match a condition
 // List.filter<Nat>(Nat.odd, [1, 2, 3, 4, 5]) = [1, 3, 5]
 filter<A: Type>(f: A -> Bool, xs: List<A>): List<A>
-  ?f
+  case xs {
+    nil: List.nil<A>
+    cons: case f(xs.head) {
+      false: filter<A>(f, xs.tail)
+      true: List.cons<A>(xs.head, filter<A>(f, xs.tail))
+    }
+  }
   
