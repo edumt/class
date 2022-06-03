@@ -23,3 +23,12 @@ second<A: Type, B: Type>(pair: Pair<A,B>): B
 map<A: Type, B: Type>(fn: A -> B, pair: Pair<A,A>): Pair<B,B>
   open pair
   Pair.new<B,B>(fn(pair.fst), fn(pair.snd))
+  
+
+ex_05:_ 
+  IO {
+    Tests._05.swap(swap)
+    Tests._05.first(first)
+    Tests._05.second(second)
+    Tests._05.map(map)
+  }

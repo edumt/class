@@ -1,0 +1,183 @@
+//-----------------------------------------------------------------------------
+// ListMap
+
+
+type ListMap<A: Type> { 
+  empty
+  cons(head: Pair<Nat, A>, tail: ListMap<A>)
+}
+
+//Do not edit below this line
+
+//This code does a stress test on the ListMap Set and Get functions
+
+// Runs x gets and y sets
+
+Tests.stress.lmap(sets: Nat, gets: Nat): IO<Unit>
+  stress.lmap.aux(sets, gets)
+
+
+stress.lmap.aux(sets: Nat, gets: Nat): IO<Unit>
+  IO { 
+    get timer     = IO.get_time
+    let timers = Pair.new<Nat, Nat>(timer, 0)
+    let val    = Maybe.none<Nat>
+    let map    = ListMap.empty<Nat>
+    stress.lmap.go(sets, sets, gets, gets, timers, timers, val, map)
+  }
+
+stress.lmap.go(sets: Nat, total_sets: Nat, gets: Nat, total_gets: Nat, sets_timer: Pair<Nat, Nat>, gets_timer: Pair<Nat, Nat>, val: Maybe<Nat>, map: ListMap<Nat>): IO<Unit>
+  case sets { 
+    zero: case gets { 
+      zero:
+        let set_total_time = 
+          let {x, y} = {Nat.to_f64(sets_timer@fst), Nat.to_f64(sets_timer@snd)}
+          F64.div(F64.sub(y, x), 1000)
+
+        let get_total_time = 
+          let {x, y} = {Nat.to_f64(gets_timer@fst), Nat.to_f64(gets_timer@snd)}
+          F64.div(F64.sub(y, x), 1000)
+
+          IO { 
+            IO.print("Done a total of "| Nat.show(total_sets)| " sets and took average "| F64.show(set_total_time)| " seconds")
+            IO.print("Done a total of "| Nat.show(total_gets)| " gets and took average "| F64.show(get_total_time)| " seconds")
+          }
+      succ:
+        let val        = Tests.stress.lmap.get<Nat>(gets, map)
+        let gets       = gets.pred
+        case gets.pred { 
+          zero:
+            IO { 
+              get last       = IO.get_time
+              let gets_timer = Pair.new<Nat, Nat>(gets_timer@fst, last)
+              stress.lmap.go(sets, total_sets, gets, total_gets, sets_timer, gets_timer, val, map)
+            }
+          succ: stress.lmap.go(sets, total_sets, gets, total_gets, sets_timer, gets_timer, val, map)
+        }
+    }
+    succ: 
+      let map        = Tests.stress.lmap.set<Nat>(sets, 1,  map)
+      let sets       = sets.pred
+      case sets.pred {
+        zero:
+          IO { 
+            get last       = IO.get_time
+            let sets_timer = Pair.new<Nat, Nat>(sets_timer@fst, last)
+            stress.lmap.go(sets, total_sets, gets, total_gets, sets_timer, gets_timer, val, map)
+          }
+        succ: stress.lmap.go(sets, total_sets, gets, total_gets, sets_timer, gets_timer, val, map)
+    }
+  } 
+
+
+Tests.stress.lmap.get<A: Type>(key: Nat, lm: ListMap<A>): Maybe<A>
+  case lm { 
+    empty: Maybe.none<A>
+    cons:  
+      let map_key = lm.head@fst
+      let result  = lm.head@snd
+      case Nat.eql(key, map_key) { 
+        true:  Maybe.some<A>(result)
+        false: Tests.stress.lmap.get<A>(key, lm.tail)
+      }
+  }
+
+
+
+Tests.stress.lmap.set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
+  let new_pair = Pair.new<Nat, A>(key, value)
+  case lm { 
+    empty: ListMap.cons<A>(new_pair, lm)
+    cons:  
+      let map_key = lm.head@fst
+      case Nat.eql(key, map_key) {
+        true:  ListMap.cons<A>(new_pair, lm.tail)
+        false: ListMap.cons<A>(lm.head, Tests.stress.lmap.set<A>(key, value, lm.tail))
+      }
+  }
+
+//-----------------------------------------------------------------------------
+// BitsMap 
+
+//Do not edit below this line
+
+//This code does a stress test on the BitsMap Set and Get functions
+
+
+//If the timme doesn't feel right, the timer only considers the time it took to
+//set and get, there are other functions runing that doesn't increase to the
+//timer, but it might take a little bit longer to run
+
+Tests.stress.bmap(sets: Nat, gets: Nat): IO<Unit>
+  IO { 
+    get total_sets = stress.sets(sets)
+    let gets       = stress.gets(gets, total_sets@fst)
+      gets
+      return total_sets@snd
+  }
+
+
+
+// Function that makes a n number of gets on a BitsMap of Nat
+stress.sets(sets: Nat): IO<Pair<BitsMap<Nat>, Unit>>
+  IO { 
+    get timer     = IO.get_time
+    let timers = Pair.new<Nat, Nat>(timer, 0)
+    let key  = Bits.e
+    let val  = Maybe.none<Nat>
+    let map  = BitsMap.new<Nat>
+    stress.set_stress_test.go(sets, sets, key, timers, map)
+  }
+
+
+//Function that makes a n number of sets into a new BitsMap of the type Nat
+stress.gets(gets: Nat, map: BitsMap<Nat>): IO<Unit>
+  IO { 
+    get timer     = IO.get_time
+    let timers = Pair.new<Nat, Nat>(timer, 0)
+    let key  = Bits.e
+    let val  = Maybe.none<Nat>
+    stress.get_stress_test.go(gets, gets, key, timers, val, map)
+  }
+
+
+//Auxiliar function
+stress.set_stress_test.go(sets: Nat, total_sets: Nat, key: Bits, time: Pair<Nat, Nat>,  map: BitsMap<Nat>): IO<Pair<BitsMap<Nat>, Unit>>
+  case sets { 
+    zero: 
+        IO {
+          get timer  = IO.get_time
+          let total_time = 
+            let {x, y} = {Nat.to_f64(time@fst), Nat.to_f64(timer)}
+            F64.div(F64.sub(y, x), 1000)
+          get print = IO.print("Done a total of "| Nat.show(total_sets)| " sets and took average "| F64.show(total_time)| " seconds")
+
+          return Pair.new<BitsMap<Nat>, Unit>(map, print)
+        }
+    succ: 
+      let key       = Bits.inc(key)
+      let new_map   = BitsMap.set<Nat>(key,(sets + total_sets), map)
+      stress.set_stress_test.go(sets.pred, total_sets, key, time,  new_map)
+  }
+
+
+
+//Auxiliar function
+
+stress.get_stress_test.go(gets: Nat, total_gets: Nat, key: Bits, time: Pair<Nat, Nat>, val: Maybe<Nat>, map: BitsMap<Nat>): IO<Unit>
+  case gets { 
+    zero: 
+      IO { 
+        get timer = IO.get_time
+        let total_time = 
+          let {x, y} = {Nat.to_f64(time@fst), Nat.to_f64(timer)}
+          F64.div(F64.sub(y, x), 1000)
+          IO.print("Done a total of "| Nat.show(total_gets)| " gets and took average "| F64.show(total_time)| " seconds")
+      }
+    succ: 
+      let gets  = gets.pred
+      let key   = Bits.inc(key)
+      let val   = BitsMap.get<Nat>(key, map)
+      stress.get_stress_test.go(gets.pred, total_gets, key, time, val, map)
+  }
+//-----------------------------------------------------------------------------
