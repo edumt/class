@@ -24,20 +24,12 @@ is_some(a: MaybeBool): Bool
 // eql(MaybeBool.some(Bool.false), MaybeBool.none            ) -> false
 // eql(MaybeBool.some(Bool.true),  MaybeBool.some(Bool.false)) -> false
 // eql(MaybeBool.some(Bool.false), MaybeBool.some(Bool.false)) -> true
-eql_bool(a: Bool, b: Bool): Bool
-  case a {
-    true: b
-    false: case b {
-      true: Bool.false
-      false: Bool.true
-    }
-  }
 eql(a: MaybeBool, b: MaybeBool): Bool
   case a {
     none: is_none(b)
     some: case b {
       none: Bool.false
-      some: eql_bool(a.value, b.value)
+      some: Bool.eql(a.value, b.value)
     }
   }
 

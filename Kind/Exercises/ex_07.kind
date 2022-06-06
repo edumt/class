@@ -221,13 +221,16 @@ length(bs: Bits): Nat
 //mul(a,b) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //mul(b,c) -> Bits.o(Bits.o(Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))))
 mul(a: Bits, b: Bits): Bits
-  case a {
-    e: Bits.e
-    i: add(b, mul(dec(a), b))
-    o: case Bits.to_nat(a.pred) { // avoiding negative overflow
-      zero: Bits.o(Bits.e)
-      succ: add(b, mul(dec(a), b)) 
-    } 
+  case is_empty(b) {
+    true: Bits.e
+    false: case a {
+      e: Bits.e
+      i: add(b, mul(dec(a), b))
+      o: case Bits.to_nat(a.pred) { // avoiding negative overflow
+        zero: Bits.o(Bits.e)
+        succ: add(b, mul(dec(a), b)) 
+      } 
+    }
   }
 
 

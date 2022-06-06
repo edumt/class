@@ -20,31 +20,20 @@ add(a: Nat, b: Nat): Nat
   }
 
 // Multiplication
-// mul_aux(a: Nat, b: Nat, acc: Nat): Nat 
-//   case a {
-//     zero: acc
-//     succ: mul_aux(a.pred, b, add(acc, b))
-//   }
 mul(a: Nat, b: Nat): Nat
-  // mul_aux(a, b, Nat.zero)
   case a {
     zero: Nat.zero
-    succ: case a.pred {
-      zero: b
-      succ: add(b, mul(a.pred, b))
-    }
+    succ: add(b, mul(a.pred, b))
   }
 
 // Subtraction
 // 4 - 5 = 0
 // 5 - 4 = 1
 sub(a: Nat, b: Nat): Nat
-  case a {
-    zero: Nat.zero
-    succ: case b {
-      zero: a
-      succ: sub(a.pred, b.pred)
-    }
+  case a b {
+    zero _: Nat.zero
+    succ zero: a
+    succ succ: sub(a.pred, b.pred)
   }
 
 // Factorial
@@ -59,10 +48,7 @@ fac(a: Nat): Nat
 eql(a: Nat, b: Nat): Bool // Given 2 numbers, it returns true if the 2 are the same and false if they are different.
   case sub(a,b) {
     succ: Bool.false
-    zero: case sub(b,a) {
-      zero: Bool.true
-      succ: Bool.false
-    }
+    zero: Nat.is_zero(sub(b,a)) 
   }
 
 // Do not use the "not" function to create the functions below
@@ -122,13 +108,11 @@ hlf(a: Nat): Nat
 // x / 0 = 0
 // 5 / 2 = 2
 div(a: Nat, b: Nat): Nat // division
-  let zero = Nat.zero
-  let one = Nat.succ(zero)
   case b {
-    zero: zero
+    zero: Nat.zero
     succ: case ltn(a, b) {
-        true: zero
-        false:  add(one, div(sub(a,b), b))
+        true: Nat.zero
+        false: add(1, div(sub(a,b), b))
       }
   }
 

@@ -7,7 +7,8 @@ type Pair <A: Type, B: Type> {
 // Example:
 // Swaps the elements of a pair
 swap<A: Type, B: Type>(pair: Pair<A,B>): Pair<B,A>
-  ?s
+  open pair
+  Pair.new<B,A>(pair.snd, pair.fst)
 
 // Returns the first element of a pair
 first<A: Type, B: Type>(pair: Pair<A,B>): A

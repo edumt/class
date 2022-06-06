@@ -65,8 +65,7 @@ drop<A: Type>(n: Nat, xs: List<A>): List<A>
 // List.take<Nat>(3, [1,2,3,4,5]) -> [1,2,3]
 take<A: Type>(n: Nat, xs: List<A>): List<A>
   case n xs {
-    zero _: xs
-    succ cons: take<A>(n.pred, xs.tail)
+    succ cons: List.cons<A>(xs.head, take<A>(n.pred, xs.tail))
   } default List.nil<A>
 
 // Applies a function to all elements of a list

@@ -200,37 +200,21 @@ eql(a: Inte, b: Inte): Bool // Given two Integers, returns true if both are the 
 // int(true,  0) > int(false, 2) = True
 gtn(a: Inte, b: Inte): Bool // if A > B then True else false
   let diff = sub(a,b)
-  case a {
-    neg: case diff {
-      pos: Bool.false
-      neg: Bool.true
+  case diff {
+    pos: case diff.num {
+      zero: Bool.false
+      succ: Bool.true
     }
-    pos: case diff {
-      pos: case diff.num {
-        zero: Bool.false
-        succ: Bool.true
-      }
-      neg: Bool.false
-    }
+    neg: Bool.false
   }
 
 // Lower than
 // int(false, 1) < int(true,  0) = True
 // int(true,  0) < int(false, 1) = False
 ltn(a: Inte, b: Inte): Bool // if A > B then False else true
-  let diff = sub(a,b)
-  case a {
-    neg: case diff {
-      pos: case diff.num {
-        zero: Bool.false
-        succ: Bool.true
-      }
-      neg: Bool.false
-    }
-    pos: case diff {
-      pos: Bool.false
-      neg: Bool.true
-    }
+  case sub(a,b) {
+    pos: Bool.false
+    neg: Bool.true
   }
 
 // Minimum
